@@ -1,0 +1,18 @@
+{
+  "name": "boxdawn-guard",
+  "displayName": "Boxdawn guard",
+  "version": "0.1.1",
+  "description": "Stops dangerous Bash and PowerShell commands before Claude Code runs them: deny, ask, or no decision.",
+  "author": { "name": "Boxdawn", "url": "https://boxdawn.com" },
+  "homepage": "https://github.com/boxdawn/guard",
+  "repository": "https://github.com/boxdawn/guard-plugin",
+  "license": "FSL-1.1-ALv2",
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "Boxdawn API key (optional)",
+      "description": "With a key, the guard fetches signed rule updates from Boxdawn at session start (the request carries the key only). Leave empty to use the fixed rules.",
+      "sensitive": true
+    }
+  }
+}
