@@ -1,6 +1,22 @@
-# Boxdawn guard
+<div align="center">
+  <img src="https://avatars.githubusercontent.com/u/317308737?s=160&v=4" width="80" alt="Boxdawn" />
+  <h1>Boxdawn guard</h1>
+  <p><strong>Stops dangerous commands before Claude Code runs them.</strong></p>
+  <p>
+    <a href="https://github.com/boxdawn/guard/releases/latest"><img src="https://img.shields.io/github/v/release/boxdawn/guard?label=release" alt="Latest release" /></a>
+    <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-FSL--1.1--ALv2-blue" alt="License: FSL-1.1-ALv2" /></a>
+    <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey" alt="Windows, macOS, Linux" />
+  </p>
+  <p>
+    <a href="https://boxdawn.com">Website</a> ·
+    <a href="#install">Install</a> ·
+    <a href="#what-this-plugin-runs-fetches-and-sends">What it runs and sends</a> ·
+    <a href="https://boxdawn.com/privacy">Privacy</a> ·
+    <a href="https://github.com/boxdawn/guard">Source</a>
+  </p>
+</div>
 
-**Stops dangerous commands before Claude Code runs them.**
+---
 
 Boxdawn guard judges every Bash and PowerShell command before Claude Code runs it. A command that would wipe a directory outside your project, force-push over shared history, drop a database or destroy cloud resources is **denied** or **held for your approval**. Everything else passes to Claude Code's own permission settings, untouched. The guard never says allow.
 
