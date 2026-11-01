@@ -6,6 +6,15 @@ Boxdawn guard judges every Bash and PowerShell command before Claude Code runs i
 
 This is the directory edition of the plugin. The guard's source, its fixed rules and its tests are in [boxdawn/guard](https://github.com/boxdawn/guard).
 
+## Install
+
+From the Claude plugin directory, or in Claude Code from Boxdawn's own marketplace, which ships every build inside the plugin and downloads nothing at session start:
+
+```
+/plugin marketplace add boxdawn/guard
+/plugin install boxdawn-guard@boxdawn
+```
+
 ## What this plugin runs, fetches and sends
 
 - **At session start** (`scripts/install.sh` on macOS and Linux, `scripts/install.ps1` on Windows): if the guard build for this version is not in the plugin's data folder yet, the script downloads one file for your machine from the [boxdawn/guard v0.1.1 release](https://github.com/boxdawn/guard/releases/tag/v0.1.1) on GitHub, checks its sha256 against the value written in the script, unpacks it into the data folder and removes the download. A file whose sha256 does not match is discarded. Once the build is in place, later sessions make no download. The request to GitHub carries no command, path or key; GitHub sees your IP address.
