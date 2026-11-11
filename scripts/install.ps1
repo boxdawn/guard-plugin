@@ -6,9 +6,9 @@
 $ErrorActionPreference = 'Stop'
 if ($env:OS -ne 'Windows_NT') { exit 0 }
 
-$Version = '0.4.9'
-$Build = '97c23f4d2edf13223966759753c186f8317bf6ca'
-$Sum = 'cff06cbd4a21a0971ae91582a4aa6c1d3198af62a9e1be52721f53a4421dccd0'
+$Version = '0.4.10'
+$Build = 'b5c784df82d761f58063ae906c9e5eb535e55b74'
+$Sum = 'c1a6cab008219454397821275548093b15a39341c5eaacd84babbe4d262ba32d'
 
 # Windows on Arm runs the x64 build under emulation.
 if ($env:PROCESSOR_ARCHITECTURE -notin @('AMD64', 'ARM64')) {
