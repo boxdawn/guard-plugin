@@ -9,12 +9,12 @@
 # stops the command: no download, no commands.
 set -eu
 
-VERSION=0.4.8
-BUILD=55ad13102e02188d07e8f73559a2a0f7484c9dda
-SUM_MACOS_ARM64=41f966b39cc626aa6fdc682f196e0a3617bddea2e1a12581416cff87fad0cf09
-SUM_MACOS_X64=cbb663cc26f48d8db04d87f37726f03a4d6e1e093a31afdbadd9be0bedd639b3
-SUM_LINUX_X64=6b9f70b7264ca92241df0cdecf658eb5650e673a3b188ebf0e6303408766e5a3
-SUM_LINUX_ARM64=77a3b4fab14b2abbba9351de8cc6dbff2ded3f8e0f0100f8fc31f1ed1c7b6bad
+VERSION=0.4.9
+BUILD=97c23f4d2edf13223966759753c186f8317bf6ca
+SUM_MACOS_ARM64=59dac7a3eed2cec6876be6348c0621fc0b088af94e9ab1500be455ad12637df7
+SUM_MACOS_X64=44d60d9fb7b3cd87e29cec9917e32b4ad1ec9c524e9232b4daac8e9ff4d56c6b
+SUM_LINUX_X64=a2b332fb7fb73a24e9e54e867de4e94acec273cfd40a924f402cadc10cb66828
+SUM_LINUX_ARM64=fd97556e574854971898299ba51353d62b6d1e19cbe97e269c8d5aa5e439a3ed
 
 case "$(uname -s)" in
   Darwin) os=macos ;;
@@ -34,7 +34,20 @@ case "$os-$arch" in
 esac
 
 dst="$CLAUDE_PLUGIN_DATA/current"
-if ! { [ -f "$dst/BUILD_ID" ] && [ "$(cat "$dst/BUILD_ID")" = "$BUILD" ]; }; then
+# A session opened before an update runs this script again from the older
+# plugin folder. It must not put its older build over a newer one, so a build
+# in place with a strictly newer VERSION is left alone.
+ver_gt() {  # $1 is strictly newer than $2, both N.N.N
+  case "$1$2" in *[!0-9.]*) return 1 ;; esac
+  old_ifs=$IFS; IFS=.; set -- $1 $2; IFS=$old_ifs
+  [ $# -eq 6 ] || return 1
+  [ "$1" -gt "$4" ] || { [ "$1" -eq "$4" ] && { [ "$2" -gt "$5" ] || { [ "$2" -eq "$5" ] && [ "$3" -gt "$6" ]; }; }; }
+}
+keep=0
+if [ -f "$dst/VERSION" ] && [ -x "$dst/bdxguard.exe" ] && ver_gt "$(cat "$dst/VERSION")" "$VERSION"; then
+  keep=1
+fi
+if [ "$keep" -eq 0 ] && ! { [ -f "$dst/BUILD_ID" ] && [ "$(cat "$dst/BUILD_ID")" = "$BUILD" ]; }; then
   mkdir -p "$CLAUDE_PLUGIN_DATA"
   tmp=$(mktemp -d "$CLAUDE_PLUGIN_DATA/download.XXXXXX")
   trap 'rm -rf "$tmp"' EXIT

@@ -6,9 +6,9 @@
 $ErrorActionPreference = 'Stop'
 if ($env:OS -ne 'Windows_NT') { exit 0 }
 
-$Version = '0.4.8'
-$Build = '55ad13102e02188d07e8f73559a2a0f7484c9dda'
-$Sum = 'be27ef02245801ccdd23affd8d0f3fbf6c830e01887026cec3c53577c2591a38'
+$Version = '0.4.9'
+$Build = '97c23f4d2edf13223966759753c186f8317bf6ca'
+$Sum = 'cff06cbd4a21a0971ae91582a4aa6c1d3198af62a9e1be52721f53a4421dccd0'
 
 # Windows on Arm runs the x64 build under emulation.
 if ($env:PROCESSOR_ARCHITECTURE -notin @('AMD64', 'ARM64')) {
@@ -18,6 +18,13 @@ $data = $env:CLAUDE_PLUGIN_DATA
 $dst = Join-Path $data 'current'
 $dstId = Join-Path $dst 'BUILD_ID'
 $installed = (Test-Path $dstId) -and ((Get-Content -Raw $dstId).Trim() -eq $Build)
+# A session opened before an update runs this script again from the older
+# plugin folder. It must not put its older build over a newer one, so a build
+# in place with a strictly newer VERSION is left alone.
+$dstVer = Join-Path $dst 'VERSION'
+if (-not $installed -and (Test-Path $dstVer) -and (Test-Path (Join-Path $dst 'bdxguard.exe'))) {
+    try { $installed = [version]((Get-Content -Raw $dstVer).Trim()) -gt [version]$Version } catch { $installed = $false }
+}
 if (-not $installed) {
     New-Item -ItemType Directory -Force $data | Out-Null
     $tmp = Join-Path $data "download.$PID"
