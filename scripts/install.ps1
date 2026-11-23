@@ -55,6 +55,17 @@ if (-not $installed) {
     }
 }
 
+# With `undo` on (unless turned off), the first snapshot of the project, also in
+# the background. A drive root is never a project, and without its `\` it would name another folder.
+if ($env:CLAUDE_PLUGIN_OPTION_UNDO -notin @('false', '0', 'no') -and $env:CLAUDE_PROJECT_DIR -and
+    $env:CLAUDE_PROJECT_DIR.TrimEnd('\').Length -gt 2) {
+    Start-Process -FilePath (Join-Path $dst 'bdxguard.exe') -ArgumentList @('undo-start', "`"$($env:CLAUDE_PROJECT_DIR.TrimEnd('\'))`"") -WindowStyle Hidden
+}
+# Copies of projects not used for 30 days go, with undo on or off.
+if (Test-Path (Join-Path $env:CLAUDE_PLUGIN_DATA 'undo')) {
+    Start-Process -FilePath (Join-Path $dst 'bdxguard.exe') -ArgumentList 'undo-clean' -WindowStyle Hidden
+}
+
 # With an API key in the plugin's settings, fetch the signed rules in the
 # background (the session does not wait). Without one this opens no connection.
 if ($env:CLAUDE_PLUGIN_OPTION_API_KEY) {
