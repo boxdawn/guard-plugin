@@ -6,9 +6,9 @@
 $ErrorActionPreference = 'Stop'
 if ($env:OS -ne 'Windows_NT') { exit 0 }
 
-$Version = '0.4.17'
-$Build = '8f81b341161995ac691b64b07f4015858f19537f'
-$Sum = '31e0c1bef37b8aeeb08f62768583fec39e2a956552de7c7b4a656fe1288fdb4b'
+$Version = '0.4.18'
+$Build = 'ad997be09696aa38f408eaa922e63894bf74efb5'
+$Sum = 'dba445a8750b0312785ea3eac967f099a62b08c91c04a4f75b37bba865b1a00e'
 
 # Windows on Arm runs the x64 build under emulation.
 if ($env:PROCESSOR_ARCHITECTURE -notin @('AMD64', 'ARM64')) {
@@ -53,6 +53,17 @@ if (-not $installed) {
     } finally {
         if (Test-Path $tmp) { Remove-Item -Recurse -Force $tmp }
     }
+}
+
+# With `undo` on (unless turned off), the first snapshot of the project, also in
+# the background. A drive root is never a project, and without its `\` it would name another folder.
+if ($env:CLAUDE_PLUGIN_OPTION_UNDO -notin @('false', '0', 'no') -and $env:CLAUDE_PROJECT_DIR -and
+    $env:CLAUDE_PROJECT_DIR.TrimEnd('\').Length -gt 2) {
+    Start-Process -FilePath (Join-Path $dst 'bdxguard.exe') -ArgumentList @('undo-start', "`"$($env:CLAUDE_PROJECT_DIR.TrimEnd('\'))`"") -WindowStyle Hidden
+}
+# Copies of projects not used for 30 days go, with undo on or off.
+if (Test-Path (Join-Path $env:CLAUDE_PLUGIN_DATA 'undo')) {
+    Start-Process -FilePath (Join-Path $dst 'bdxguard.exe') -ArgumentList 'undo-clean' -WindowStyle Hidden
 }
 
 # With an API key in the plugin's settings, fetch the signed rules in the

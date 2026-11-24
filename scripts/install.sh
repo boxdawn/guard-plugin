@@ -9,12 +9,12 @@
 # stops the command: no download, no commands.
 set -eu
 
-VERSION=0.4.17
-BUILD=8f81b341161995ac691b64b07f4015858f19537f
-SUM_MACOS_ARM64=05b70a4f2ef2289178eb6298d28635b0911d196e7988bafb8f5f531c09cb680a
-SUM_MACOS_X64=4bab794dde2a3fa326d9acecfcb529e3dfa259d3833e1d8565c8fb514742a9b5
-SUM_LINUX_X64=d36851279a389d580d5c823d6ad53ce0a8a51183f6c8b118b7e8c4ac0db4649f
-SUM_LINUX_ARM64=84ff2c3e967a884c977c58e851b3fb8e61939f65fb2ffbd82f540e2ea4c22b4b
+VERSION=0.4.18
+BUILD=ad997be09696aa38f408eaa922e63894bf74efb5
+SUM_MACOS_ARM64=14a9b5e778d505f0ceabc654ffb04e27b563681a8e0e24a3ea59bbc12af60ddf
+SUM_MACOS_X64=6698db2309673239cd01b719eb384835297fa85569c3fec18ecb460550f9bdae
+SUM_LINUX_X64=8a8a2ac1b3508a2efe40285e3c8da9dd86be6ff39da04d80e299e33369bf1c89
+SUM_LINUX_ARM64=5d4faca16d74f739541f61e7d588d116154d1bd95ebf41a6954368a467b81854
 
 case "$(uname -s)" in
   Darwin) os=macos ;;
@@ -75,6 +75,18 @@ if [ "$keep" -eq 0 ] && ! { [ -f "$dst/BUILD_ID" ] && [ "$(cat "$dst/BUILD_ID")"
   if [ -d "$dst" ]; then mv "$dst" "$dst.old"; fi
   mv "$tmp/build" "$dst"
   rm -rf "$dst.old"
+fi
+
+# With `undo` on (unless turned off), the first snapshot of the project, also in
+# the background.
+case "${CLAUDE_PLUGIN_OPTION_UNDO:-}" in [Ff][Aa][Ll][Ss][Ee]|0|[Nn][Oo]) ;; *)
+  if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    nohup "$dst/bdxguard.exe" undo-start "$CLAUDE_PROJECT_DIR" </dev/null >/dev/null 2>&1 &
+  fi ;;
+esac
+# Copies of projects not used for 30 days go, with undo on or off.
+if [ -d "$CLAUDE_PLUGIN_DATA/undo" ]; then
+  nohup "$dst/bdxguard.exe" undo-clean </dev/null >/dev/null 2>&1 &
 fi
 
 # With an API key in the plugin's settings, fetch the signed rules in the
